@@ -67,11 +67,11 @@
             <scope>runtime</scope>
             <version>${mysql.version}</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.liquibase</groupId>-->
-        <!--            <artifactId>liquibase-core</artifactId>-->
-        <!--            <version>${liquibase.version}</version>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>

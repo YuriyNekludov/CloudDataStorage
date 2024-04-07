@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Cloud Data Storage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="/css/style.css" type="text/css" rel="stylesheet"/>
+    <link href="/image/favicon.svg" type="image/x-icon"/>
+    <style>
+        .form-horizontal{
+            background: #fff;
+            padding-bottom: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .form-horizontal .heading{
+            display: block;
+            font-size: 35px;
+            font-weight: 700;
+            padding: 35px 0;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 30px;
+        }
+        .form-horizontal .form-group{
+            padding: 0 40px;
+            margin: 0 0 25px 0;
+            position: relative;
+        }
+        .form-horizontal .form-control{
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            box-shadow: none;
+            padding: 0 20px 0 45px;
+            height: 40px;
+            transition: all 0.3s ease 0s;
+        }
+        .form-horizontal .form-control:focus{
+            background: #e0e0e0;
+            box-shadow: none;
+            outline: 0 none;
+        }
+        .form-horizontal .form-group i{
+            position: absolute;
+            top: 12px;
+            left: 60px;
+            font-size: 17px;
+            color: #c8c8c8;
+            transition : all 0.5s ease 0s;
+        }
+        .form-horizontal .form-control:focus + i{
+            color: #00b4ef;
+        }
+        .form-horizontal .fa-question-circle{
+            display: inline-block;
+            position: absolute;
+            top: 12px;
+            right: 60px;
+            font-size: 20px;
+            color: #808080;
+            transition: all 0.5s ease 0s;
+        }
+        .form-horizontal .fa-question-circle:hover{
+            color: #000;
+        }
+        .form-horizontal .main-checkbox{
+            float: left;
+            width: 20px;
+            height: 20px;
+            background: #11a3fc;
+            border-radius: 50%;
+            position: relative;
+            margin: 5px 0 0 5px;
+            border: 1px solid #11a3fc;
+        }
+        .form-horizontal .main-checkbox label{
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+        .form-horizontal .main-checkbox label:after{
+            content: "";
+            width: 10px;
+            height: 5px;
+            position: absolute;
+            top: 5px;
+            left: 4px;
+            border: 3px solid #fff;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            opacity: 0;
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+        .form-horizontal .main-checkbox input[type=checkbox]{
+            visibility: hidden;
+        }
+        .form-horizontal .main-checkbox input[type=checkbox]:checked + label:after{
+            opacity: 1;
+        }
+        .form-horizontal .text{
+            float: left;
+            margin-left: 7px;
+            line-height: 20px;
+            padding-top: 5px;
+            text-transform: capitalize;
+        }
+        .form-horizontal .btn{
+            float: right;
+            font-size: 14px;
+            color: #fff;
+            background: #adb5bd;
+            border-radius: 30px;
+            padding: 10px 25px;
+            border: none;
+            text-transform: capitalize;
+            transition: all 0.5s ease 0s;
+        }
+        @media only screen and (max-width: 479px){
+            .form-horizontal .form-group{
+                padding: 0 25px;
+            }
+            .form-horizontal .form-group i{
+                left: 45px;
+            }
+            .form-horizontal .btn{
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-center text bd-highlight opacity-100 p-2 bg-secondary text-light fw-bold rounded m-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
+                    <path d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"/>
+                    <path d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"/>
+                </svg>
+                <h1 class="">Cloud Data Storage</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<main>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-offset-3 col-md-6" style="margin-top: 7%;">
+                <form class="form-horizontal" method="POST" action="/registration" th:object="${user}">
+                    <span class="heading">РЕГИСТРАЦИЯ</span>
+                    <div class="card card-body justify-content-md-center" style="flex: 0 0 auto; margin: auto; border: none"
+                         th:if="${param.message}">
+                        <p style="color: red" th:text="${param.message}"></p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="username" placeholder="Username" th:field="*{username}">
+                    </div>
+                    <div class="form-text" style="color: red; margin: auto; margin-bottom: 1.5em;"
+                         th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                    <div class="form-group help">
+                        <input type="password" class="form-control" id="password" placeholder="Password" th:field="*{password}">
+                    </div>
+                    <div class="form-text" style="color: red; margin: auto; margin-bottom: 1.5em;"
+                         th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    <div class="form-group help">
+                        <input type="password" class="form-control" id="repeatPassword" placeholder="Repeat password" th:field="*{repeatPassword}">
+                    </div>
+                    <div class="form-text" style="color: red; margin: auto; margin-bottom: 1.5em;"
+                         th:if="${#fields.hasErrors('repeatPassword')}" th:errors="*{repeatPassword}"></div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">РЕГИСТРАЦИЯ</button>
+                    </div>
+                </form>
+                <form class="form-horizontal" th:method="GET" th:action="@{/login}">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">ВХОД</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<footer>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-center text fixed-bottom bd-highlight opacity-100 p-2 bg-secondary text-light fw-bold rounded m-auto">
+                <a class="link-light" href="https://github.com/YuriyNekludov">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-github"
+                         viewBox="0 0 16 16">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

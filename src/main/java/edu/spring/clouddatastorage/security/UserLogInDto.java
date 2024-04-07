@@ -1,28 +1,26 @@
 package edu.spring.clouddatastorage.security;
 
 
+import edu.spring.clouddatastorage.model.Role;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
-public record UserLogInDto(String username,
-                           String password) implements UserDetails {
+@Getter
+@RequiredArgsConstructor
+public class UserLogInDto implements UserDetails {
+
+    private final String username;
+    private final String password;
+    private final Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
+        return Collections.singleton(role);
     }
 
     @Override
