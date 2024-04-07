@@ -2,8 +2,10 @@ package edu.spring.clouddatastorage.dto;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 
+@Builder
 public record UserCreateDto(
 
         @NotBlank(message = "Поле \"username\" не должно быть пустым.")

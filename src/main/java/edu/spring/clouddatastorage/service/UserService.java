@@ -2,6 +2,7 @@ package edu.spring.clouddatastorage.service;
 
 import edu.spring.clouddatastorage.exception.PasswordNotMatchingException;
 import edu.spring.clouddatastorage.dto.UserCreateDto;
+import edu.spring.clouddatastorage.exception.UserAlreadyCreatedException;
 import edu.spring.clouddatastorage.mapper.UserMapper;
 import edu.spring.clouddatastorage.model.Role;
 import edu.spring.clouddatastorage.repository.UserRepository;
@@ -33,6 +34,11 @@ public class UserService implements UserDetailsService {
         var user = userMapper.entityFromDto(userDto);
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRole(Role.USER);
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new UserAlreadyCreatedException("Пользователь с username \""
+                    + userDto.username() + "\" уже существует.");
+        }
     }
 }

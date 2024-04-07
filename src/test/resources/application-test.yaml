@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    username: test
+    password: test
+
+  liquibase:
+    change-log: classpath:changelog/test.changelog-master.yaml
+    enabled: true
+    default-schema: test
+
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: validate
