@@ -10,7 +10,7 @@ public class AnotherExceptionHandler implements ExceptionHandlerStrategy {
 
     @Override
     public String handeException(HttpServletResponse resp, RedirectAttributes redirectAttributes, Exception e) {
-        log.warn("Something went wrong while handling an exception: {}", e.getStackTrace());
+        log.warn("Something went wrong while handling an exception: {}", e.getMessage());
         resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         redirectAttributes.addAttribute("message", "Что-то пошло не так :(");
         return "redirect:/error";

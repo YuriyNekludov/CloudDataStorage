@@ -26,6 +26,7 @@
         <liquibase.version>4.27.0</liquibase.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mysql.testcontainers.version>1.19.7</mysql.testcontainers.version>
+        <minio.version>8.5.9</minio.version>
     </properties>
 
     <dependencies>
@@ -72,6 +73,12 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>${minio.version}</version>
         </dependency>
 
         <dependency>

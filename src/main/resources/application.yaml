@@ -2,23 +2,19 @@ spring:
   config:
     name: CloudDataStorage
     import: optional:file:.env[.properties]
-
   mvc:
     hiddenmethod:
       filter:
         enabled: true
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/${MYSQL_DATABASE}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
-
   liquibase:
     change-log: classpath:database/changelog/db.changelog-master.yaml
     enabled: true
     default-schema: ${MYSQL_DATABASE}
-
   jpa:
     properties:
       hibernate:
@@ -28,3 +24,9 @@ spring:
         hbm2ddl:
           auto: validate
     open-in-view: false
+
+minio:
+  bucket: ${MINIO_BUCKET}
+  endpoint: ${MINIO_ENDPOINT}
+  accessKey: ${MINIO_ACCESS_KEY}
+  secretKey: ${MINIO_SECRET_KEY}

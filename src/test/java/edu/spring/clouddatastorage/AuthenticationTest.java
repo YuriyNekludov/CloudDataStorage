@@ -27,15 +27,6 @@ public class AuthenticationTest extends CloudDataStorageApplicationTest {
                 .repeatPassword("123")
                 .build();
         userService.create(userDto);
-        var user = userRepository.findByUsername(userDto.username());
-        assertThat(user).isNotNull();
-    }
-
-    @Test
-    public void loginUserShouldBeSuccessful() {
-        var userDto = UserCreateDto.builder()
-                .username("ivanov")
-                .build();
         assertDoesNotThrow(() -> userService.loadUserByUsername(userDto.username()));
     }
 

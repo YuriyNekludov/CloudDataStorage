@@ -1,3 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: changelog/test.changelog-1.0.sql

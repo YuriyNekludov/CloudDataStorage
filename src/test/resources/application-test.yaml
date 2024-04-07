@@ -4,8 +4,6 @@ spring:
     password: test
 
   liquibase:
-    change-log: classpath:changelog/test.changelog-master.yaml
-    enabled: true
     default-schema: test
 
   jpa:
