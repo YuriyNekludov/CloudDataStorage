@@ -53,28 +53,6 @@
         .form-horizontal .form-control:focus + i{
             color: #00b4ef;
         }
-        .form-horizontal .fa-question-circle{
-            display: inline-block;
-            position: absolute;
-            top: 12px;
-            right: 60px;
-            font-size: 20px;
-            color: #808080;
-            transition: all 0.5s ease 0s;
-        }
-        .form-horizontal .fa-question-circle:hover{
-            color: #000;
-        }
-        .form-horizontal .main-checkbox{
-            float: left;
-            width: 20px;
-            height: 20px;
-            background: #11a3fc;
-            border-radius: 50%;
-            position: relative;
-            margin: 5px 0 0 5px;
-            border: 1px solid #11a3fc;
-        }
         .form-horizontal .main-checkbox label{
             width: 20px;
             height: 20px;
@@ -138,13 +116,23 @@
 <body>
 <header>
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12 text-center text bd-highlight opacity-100 p-2 bg-secondary text-light fw-bold rounded m-auto">
+        <div class="row  bg-secondary">
+            <div class="col-3"></div>
+            <div class="col-6 text-center text bd-highlight opacity-100 p-2 bg-secondary text-light fw-bold rounded m-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
                     <path d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"/>
                     <path d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"/>
                 </svg>
                 <h1 class="">Cloud Data Storage</h1>
+            </div>
+            <div class="col-3 opacity-100 bg-secondary text-light m-auto d-flex justify-content-end align-items-center">
+                <div class="opacity-100 bg-secondary text-light m-auto d-flex justify-content-end align-items-center" th:if="${username}">
+                    <h5>Добро пожаловать, </h5>
+                    <h5 th:text="${username}"></h5>
+                    <form th:method="GET" th:action="@{/logout}">
+                        <button class="btn btn-outline-light m-2 align-content-center" type="submit">Выйти</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -12,7 +12,7 @@ import java.util.Collections;
 
 @Getter
 @RequiredArgsConstructor
-public class UserLogInDto implements UserDetails {
+public class UserDetailsDto implements UserDetails {
 
     private final Long id;
     private final String username;

@@ -20,6 +20,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final FileManagerService fileManagerService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,10 +36,12 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRole(Role.USER);
         try {
-            userRepository.save(user);
+            user = userRepository.save(user);
+            fileManagerService.createDefaultFolderForUser(user);
         } catch (Exception e) {
             throw new UserAlreadyCreatedException("Пользователь с username \""
                     + userDto.username() + "\" уже существует.");
         }
+
     }
 }
