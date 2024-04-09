@@ -1,6 +1,5 @@
 package edu.spring.clouddatastorage.service;
 
-import edu.spring.clouddatastorage.exception.PasswordNotMatchingException;
 import edu.spring.clouddatastorage.dto.UserCreateDto;
 import edu.spring.clouddatastorage.exception.UserAlreadyCreatedException;
 import edu.spring.clouddatastorage.mapper.UserMapper;
@@ -30,18 +29,16 @@ public class UserService implements UserDetailsService {
     }
 
     public void create(UserCreateDto userDto) {
-        if (!userDto.password().equals(userDto.repeatPassword()))
-            throw new PasswordNotMatchingException("Введенные пароли должны совпадать.");
         var user = userMapper.entityFromDto(userDto);
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRole(Role.USER);
         try {
             user = userRepository.save(user);
-            fileManagerService.createDefaultFolderForUser(user);
+            var rootFolderName = "user-" + user.getId() + "-files";
+            fileManagerService.createNewFolder(rootFolderName);
         } catch (Exception e) {
             throw new UserAlreadyCreatedException("Пользователь с username \""
                     + userDto.username() + "\" уже существует.");
         }
-
     }
 }

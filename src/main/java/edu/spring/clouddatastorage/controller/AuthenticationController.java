@@ -1,6 +1,7 @@
 package edu.spring.clouddatastorage.controller;
 
 import edu.spring.clouddatastorage.dto.UserCreateDto;
+import edu.spring.clouddatastorage.exception.PasswordNotMatchingException;
 import edu.spring.clouddatastorage.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class AuthenticationController {
                                  RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors())
             return "authentication/registration";
+        if (!user.password().equals(user.repeatPassword()))
+            throw new PasswordNotMatchingException("Введенные пароли должны совпадать.");
         userService.create(user);
         redirectAttributes.addAttribute("successMessage",
                 "Регистрация прошла успешно. Теперь вы можете авторизоваться.");

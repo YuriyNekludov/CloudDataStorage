@@ -2,7 +2,6 @@ html, body {
     height: 100%;
 }
 
-/* Form Style */
 .form-horizontal{
     background: #fff;
     padding-bottom: 40px;
@@ -109,7 +108,7 @@ html, body {
     float: right;
     font-size: 14px;
     color: #fff;
-    background: #00b4ef;
+    background: #adb5bd;
     border-radius: 30px;
     padding: 10px 25px;
     border: none;

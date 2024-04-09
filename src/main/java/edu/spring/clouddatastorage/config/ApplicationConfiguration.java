@@ -39,7 +39,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
                 .anonymous(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
-                                .requestMatchers("/registration", "/login")
+                                .requestMatchers("/registration", "/login", "/css/**", "/images/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
