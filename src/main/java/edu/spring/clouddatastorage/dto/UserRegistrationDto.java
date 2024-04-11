@@ -6,7 +6,7 @@ import lombok.Builder;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 
 @Builder
-public record UserCreateDto(
+public record UserRegistrationDto(
 
         @NotBlank(message = "Поле \"username\" не должно быть пустым.")
         @Size(min = 4, max = 25, message = "Поле \"username\" должно содержать от 4 до 25 символов.")

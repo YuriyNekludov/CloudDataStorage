@@ -1,7 +1,6 @@
 package edu.spring.clouddatastorage.config;
 
 import edu.spring.clouddatastorage.config.props.MinioProperties;
-import edu.spring.clouddatastorage.interceptor.UserInfoInterceptor;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -15,13 +14,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class ApplicationConfiguration implements WebMvcConfigurer {
+public class ApplicationConfiguration {
 
     private final MinioProperties minioProperties;
 
@@ -66,10 +63,5 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
                     .build());
         }
         return minioClient;
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new UserInfoInterceptor());
     }
 }

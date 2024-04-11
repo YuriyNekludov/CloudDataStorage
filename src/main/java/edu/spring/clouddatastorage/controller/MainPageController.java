@@ -1,6 +1,8 @@
 package edu.spring.clouddatastorage.controller;
 
+import edu.spring.clouddatastorage.dto.folder.FolderDto;
 import edu.spring.clouddatastorage.service.FileManagerService;
+import edu.spring.clouddatastorage.util.ControllerHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,11 +18,17 @@ public class MainPageController {
     private final FileManagerService fileManagerService;
 
     @GetMapping()
-    public String mainPage(@RequestParam(value = "path", required = false) String path,
-                           Model model) {
-        var userId = (Long) model.getAttribute("userId");
-        if (path == null) {
-            model.addAttribute("userFiles", fileManagerService.getAllUsersFiles(userId));
+    public String mainPage(@RequestParam(value = "path", required = false) String path, Model model) {
+        var userDto = ControllerHelper.takeUserDtoFromSecurity();
+        model.addAttribute("userDto", userDto);
+        var folderDto = FolderDto.builder()
+                .path(path)
+                .userId(userDto.id())
+                .build();
+        model.addAttribute("userFiles", fileManagerService.getFiles(folderDto));
+        if (path != null) {
+            model.addAttribute("path", path);
+            model.addAttribute("navigationPath", ControllerHelper.parsePathForNavigation(path));
         }
         return "main_page";
     }

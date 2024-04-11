@@ -1,8 +1,9 @@
-package edu.spring.clouddatastorage.dto;
+package edu.spring.clouddatastorage.dto.file;
 
 import lombok.Builder;
 
 @Builder
 public record FileDtoResponse(String fileName,
+                              String path,
                               Boolean isFolder) {
 }

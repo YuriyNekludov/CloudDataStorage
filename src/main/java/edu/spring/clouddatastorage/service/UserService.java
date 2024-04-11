@@ -1,6 +1,7 @@
 package edu.spring.clouddatastorage.service;
 
-import edu.spring.clouddatastorage.dto.UserCreateDto;
+import edu.spring.clouddatastorage.dto.UserDtoResponse;
+import edu.spring.clouddatastorage.dto.UserRegistrationDto;
 import edu.spring.clouddatastorage.exception.UserAlreadyCreatedException;
 import edu.spring.clouddatastorage.mapper.UserMapper;
 import edu.spring.clouddatastorage.model.Role;
@@ -19,23 +20,21 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final FileManagerService fileManagerService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .map(userMapper::dtoFromEntity)
+                .map(userMapper::detailsDtoFromEntity)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
     }
 
-    public void create(UserCreateDto userDto) {
+    public UserDtoResponse create(UserRegistrationDto userDto) {
         var user = userMapper.entityFromDto(userDto);
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRole(Role.USER);
         try {
             user = userRepository.save(user);
-            var rootFolderName = "user-" + user.getId() + "-files";
-            fileManagerService.createNewFolder(rootFolderName);
+            return userMapper.dtoResponseFromEntity(user);
         } catch (Exception e) {
             throw new UserAlreadyCreatedException("Пользователь с username \""
                     + userDto.username() + "\" уже существует.");

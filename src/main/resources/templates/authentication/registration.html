@@ -23,9 +23,9 @@
             </div>
             <div class="col-3 opacity-100 bg-secondary text-light m-auto d-flex justify-content-end align-items-center">
                 <div class="opacity-100 bg-secondary text-light m-auto d-flex justify-content-end align-items-center"
-                     th:if="${username}">
+                     th:if="${userDto}">
                     <h5>Добро пожаловать, </h5>
-                    <h5 th:text="${username}"></h5>
+                    <h5 th:text="${userDto.username()}"></h5>
                     <form th:method="GET" th:action="@{/logout}">
                         <button class="btn btn-outline-light m-2 align-content-center" type="submit">Выйти</button>
                     </form>

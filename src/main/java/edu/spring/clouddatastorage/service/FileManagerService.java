@@ -1,12 +1,14 @@
 package edu.spring.clouddatastorage.service;
 
-import edu.spring.clouddatastorage.dto.FileDtoResponse;
+import edu.spring.clouddatastorage.dto.file.FileDeleteDto;
+import edu.spring.clouddatastorage.dto.file.FileDtoResponse;
+import edu.spring.clouddatastorage.dto.folder.FolderDto;
 
 import java.util.List;
 
 public interface FileManagerService {
 
-    void createNewFolder(String folderName);
+    List<FileDtoResponse> getFiles(FolderDto folderDto);
 
-    List<FileDtoResponse> getAllUsersFiles(Long id);
+    void delete(FileDeleteDto fileDto);
 }
