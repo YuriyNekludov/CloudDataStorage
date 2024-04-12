@@ -4,7 +4,7 @@ import edu.spring.clouddatastorage.dto.UserRegistrationDto;
 import edu.spring.clouddatastorage.exception.PasswordNotMatchingException;
 import edu.spring.clouddatastorage.exception.UserAlreadyCreatedException;
 import edu.spring.clouddatastorage.repository.UserRepository;
-import edu.spring.clouddatastorage.service.UserService;
+import edu.spring.clouddatastorage.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class AuthenticationTest extends CloudDataStorageApplicationTest {
     UserRepository userRepository;
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
 
     @Test
     public void registerNewUserShouldBeSuccessful() {

@@ -1,54 +1,59 @@
 package edu.spring.clouddatastorage.service.impl;
 
-import edu.spring.clouddatastorage.config.props.MinioProperties;
+import edu.spring.clouddatastorage.dao.MinioDao;
+import edu.spring.clouddatastorage.dto.file.FileDeleteDto;
+import edu.spring.clouddatastorage.dto.file.FileRenameDto;
 import edu.spring.clouddatastorage.dto.folder.FolderCreateDto;
 import edu.spring.clouddatastorage.dto.UserDtoResponse;
 import edu.spring.clouddatastorage.service.FolderService;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import edu.spring.clouddatastorage.util.StringFormatUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-
-@Log4j2
 @Service
 @RequiredArgsConstructor
 public class FolderServiceImpl implements FolderService {
 
-    private final MinioClient minioClient;
-    private final MinioProperties minioProperties;
+    private final MinioDao minioDao;
 
     @Override
     public void createUserRootFolder(UserDtoResponse userDto) {
-        var userRootFolderName = String.format("user-%d-files", userDto.id());
-        createFolder(userRootFolderName);
-        log.info("Folder {} for user {} created successfully", userRootFolderName, userDto.id());
+        var userRootFolderName = StringFormatUtil.getUserRootFolderName(userDto.id());
+        minioDao.createFolder(userRootFolderName);
     }
 
     @Override
-    public void createNewFolder(FolderCreateDto folderDto) {
-        String newFolderName;
-        if (folderDto.path() == null || folderDto.path().isEmpty()) {
-            newFolderName = String.format("user-%d-files/%s/", folderDto.userId(), folderDto.folderName());
-        } else
-            newFolderName = String.format("user-%d-files/%s/%s/",
-                    folderDto.userId(),
-                    folderDto.path(),
-                    folderDto.folderName());
-        createFolder(newFolderName);
+    public void create(FolderCreateDto folderDto) {
+        String newFolderName = StringFormatUtil.getPathOrNameForFolders(
+                folderDto.path(),
+                folderDto.folderName(),
+                folderDto.userId()
+        );
+        minioDao.createFolder(newFolderName);
     }
 
-    private void createFolder(String folderName) {
-        try {
-            minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(minioProperties.getBucket())
-                    .object(folderName + "/")
-                    .stream(new ByteArrayInputStream(new byte[] {}), 0, -1)
-                    .build());
-        } catch (Exception e) {
-            throw new RuntimeException(e); // TODO
-        }
+    @Override
+    public void delete(FileDeleteDto fileDto) {
+        var deletePath = StringFormatUtil.getPathOrNameForFolders(
+                fileDto.path(),
+                fileDto.fileName(),
+                fileDto.userId()
+        );
+        minioDao.deleteFolder(deletePath);
+    }
+
+    @Override
+    public void rename(FileRenameDto fileDto) {
+        var pathForRename = StringFormatUtil.getPathOrNameForFolders(
+                fileDto.path(),
+                fileDto.oldName(),
+                fileDto.userId()
+        );
+        var pathWithNewName = StringFormatUtil.getPathOrNameForFolders(
+                fileDto.path(),
+                fileDto.newName(),
+                fileDto.userId()
+        );
+        minioDao.renameFolder(pathForRename, pathWithNewName);
     }
 }

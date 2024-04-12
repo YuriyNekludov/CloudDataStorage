@@ -24,8 +24,7 @@
             <div class="col-3 opacity-100 bg-secondary text-light m-auto d-flex justify-content-end align-items-center">
                 <div class="opacity-100 bg-secondary text-light m-auto d-flex justify-content-end align-items-center"
                      th:if="${userDto}">
-                    <h5>Добро пожаловать, </h5>
-                    <h5 th:text="${userDto.username()}"></h5>
+                    <h5 th:text="'Добро пожаловать, ' + ${userDto.username()}"></h5>
                     <form th:method="GET" th:action="@{/logout}">
                         <button class="btn btn-outline-light m-2 align-content-center" type="submit">Выйти</button>
                     </form>
@@ -51,10 +50,27 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenu"
                         style="text-align: center">
-                        <label for="formFile" class="form-label">Файл</label>
-                        <input class="form-control" type="file" id="formFile" style="margin-bottom: 0.5rem">
-                        <label for="formFolder" class="form-label">Папку</label>
-                        <input class="form-control" type="file" id="formFolder">
+                        <form th:method="POST" th:action="@{/upload}" enctype="multipart/form-data">
+                            <label for="formFile" class="form-label">Файл</label>
+                            <input class="form-control" type="file" id="formFile" name="file"
+                                   style="margin-bottom: 0.5rem" multiple>
+                            <input type="hidden" name="path" th:value="${path}">
+                            <input type="hidden" name="userId" th:value="${userDto.id()}">
+                            <button type="submit" class="btn btn-outline-light bg-secondary"
+                                    style="margin-bottom: 0.5rem">
+                                Загрузить
+                            </button>
+                        </form>
+                        <form th:method="POST" th:action="@{/upload}" enctype="multipart/form-data">
+                            <label for="formFolder" class="form-label" style="margin-bottom: 0.5rem">Папку</label>
+                            <input class="form-control" type="file" id="formFolder" name="folder" webkitdirectory
+                                   multiple style="margin-bottom: 0.5rem">
+                            <input type="hidden" name="path" th:value="${path}">
+                            <input type="hidden" name="userId" th:value="${userDto.id()}">
+                            <button type="submit" class="btn btn-outline-light bg-secondary">
+                                Загрузить
+                            </button>
+                        </form>
                     </ul>
                 </div>
                 <div class="dropdown mb-3 mt-3">
@@ -80,19 +96,33 @@
                 <p class="text-muted" style="font-size: small">
                     Внимание: папка создастся в той директории, в который вы находитесь на данный момент.
                 </p>
+                <div class="card" th:if="${fileDto}">
+                    <img src="image/file-earmark-fill.svg" width="50"
+                         height="50" class="card-img-top" alt="card-grid-image">
+                    <div class="card-body">
+                        <h5 th:text="${fileDto.name()}"></h5>
+                        <a th:href="@{/(path=${fileDto.path()})}" th:if="${fileDto.path() != null}"
+                           th:text="${'Путь к файлу: ' + fileDto.path()}"></a>
+                        <p th:if="${fileDto.path() == null}" th:text="${'Файл находится в корневой папке.'}"></p>
+                        <p th:text="${'Изменен: ' + fileDto.lastModified()}"></p>
+                        <p th:text="${'Размер файла: ' + fileDto.size()} + байт"></p>
+                        <a th:href="@{${fileDto.url()}}" th:text="${'Скачать'}"></a>
+                    </div>
+                </div>
             </div>
             <div class="col-7" style="border-right: 1px solid #ccc;">
-                <div class="text-center">
-                    <p th:if="${userFiles == null or userFiles.isEmpty()}"
-                       th:text="'У вас на данный момент не загруженных файлов.'"></p>
+                <div class="col-2 d-flex flex-column justify-content-center align-items-center"
+                     style="height: 75vh; width: 100%;" th:if="${userFiles == null or userFiles.isEmpty()}">
+                    <p th:text="'У вас на данный момент нет загруженных файлов.'"></p>
                 </div>
                 <div class="card-group d-flex flex-row align-items-md-start" style="margin-top: 1rem;"
                      th:if="${userFiles}">
-                    <div class="card" style="margin-left: 1rem; width: 15%; flex: 0 0 auto;"
+                    <div class="card" style="margin-left: 1rem; width: 20%; flex: 0 0 auto;"
                          th:each="userFile : ${userFiles}">
-                        <a class="nav-link" th:href="@{/(path=${path == null ? userFile.fileName() : path + '/' + userFile.fileName()})}">
+                        <a class="nav-link" th:if="${userFile.isFolder()}"
+                           th:href="@{/(path=${path == null ? userFile.fileName() : path + '/' + userFile.fileName()})}">
                             <div>
-                                <img th:src="${userFile.isFolder() ? 'image/folder-fill.svg' : 'image/file-eamark-fill.svg'}"
+                                <img src="image/folder-fill.svg"
                                      class="card-img-top" alt="card-group-image"
                                      width="50"
                                      height="50">
@@ -101,13 +131,26 @@
                                 <h5 class="card-title" th:text="${userFile.fileName()}"></h5>
                             </div>
                         </a>
-                        <div class="btn-group dropend">
+                        <a class="nav-link" th:if="${!userFile.isFolder()}"
+                           th:href="@{/files(path=${path == null ? null : path}, name=${userFile.fileName()})}">
+                            <div>
+                                <img src="image/file-earmark-fill.svg"
+                                     class="card-img-top" alt="card-group-image"
+                                     width="50"
+                                     height="50">
+                            </div>
+                            <div class="card-body" style="text-align: center">
+                                <h5 class="card-title" th:text="${userFile.fileName()}"></h5>
+                            </div>
+                        </a>
+                        <div class="btn-group dropend" style="margin-top: 0.3rem">
                             <button type="button" class="btn btn-secondary dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                >>
+                                Опции
                             </button>
-                            <ul class="dropdown-menu">
-                                <form class="d-flex align-items-center" th:method="DELETE"
+                            <ul class="dropdown-menu dropdown-menu-dark"
+                                style="text-align: center; width: 250px;">
+                                <form class="d-flex flex-column align-items-center mb-2" th:method="DELETE"
                                       th:action="@{/delete}">
                                     <input type="hidden" name="path" th:value="${path}">
                                     <input type="hidden" name="fileName" th:value="${userFile.fileName()}">
@@ -115,31 +158,23 @@
                                     <input type="hidden" name="userId" th:value="${userDto.id()}">
                                     <button type="submit" class="btn btn-secondary btn-sm">Удалить</button>
                                 </form>
-                                <div class="dropdown mb-3 mt-3">
-                                    <button class="btn btn-outline-light bg-secondary dropdown-toggle"
-                                            type="button"
-                                            id="dropdown" data-bs-toggle="dropdown" aria-expanded="true">
+                                <form class="d-flex flex-column align-items-center" th:method="PATCH"
+                                      th:action="@{/rename}">
+                                    <input class="form-control me-2 mb-2" id="newFolderName"
+                                           name="newName" type="text"
+                                           placeholder="Введите новое имя"
+                                           aria-label="Search" style="margin-left: 0.5rem">
+                                    <input type="hidden" id="pathForRename" name="path"
+                                           th:value="${path}">
+                                    <input type="hidden" id="oldFolderName" name="oldName"
+                                           th:value="${userFile.fileName()}">
+                                    <input type="hidden" name="userId" th:value="${userDto.id()}">
+                                    <input type="hidden" name="isFolder" th:value="${userFile.isFolder()}">
+                                    <button class="btn btn-outline-light bg-secondary m-2 align-content-center"
+                                            type="submit">
                                         Переименовать
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdown"
-                                        style="text-align: center">
-                                        <form class="d-flex align-items-center" th:method="PATCH"
-                                              th:action="@{/rename}">
-                                            <input class="form-control me-2" id="newFolderName"
-                                                   name="folderName" type="text"
-                                                   placeholder="Введите новое имя"
-                                                   aria-label="Search" style="margin-left: 0.5rem">
-                                            <input type="hidden" id="pathForRename" name="pathForRename"
-                                                   th:value="${path}">
-                                            <input type="hidden" id="oldFolderName" name="oldFolderName"
-                                                   th:value="${userFile.fileName()}">
-                                            <button class="btn btn-outline-light bg-secondary m-2 align-content-center"
-                                                    type="submit">
-                                                Переименовать
-                                            </button>
-                                        </form>
-                                    </ul>
-                                </div>
+                                </form>
                             </ul>
                         </div>
                     </div>
@@ -158,12 +193,15 @@
                     <li class="list-group-item" th:if="${navigationPath}" th:each="navPath : ${navigationPath}">
                         <a class="nav-link disabled" th:if="${navPath.equals(path)}" th:href="@{/(path=${navPath})}"
                            tabindex="-1" aria-disabled="true" th:text="${navPath} + ' <-- Вы находитесь здесь'"></a>
-                        <a th:if="${!navPath.equals(path)}" th:href="@{/(path=${navPath})}" th:text="${navPath}"></a>
+                        <a th:if="${!navPath.equals(path)}" th:href="@{/(path=${navPath})}"
+                           th:text="${navPath}"></a>
                     </li>
-                    <li class="list-group-item" th:each="userFile : ${userFiles}">
-                        <a class="nav-link" th:if="${path == null}" th:href="@{/(path=${userFile.fileName()})}"
+                    <li class="list-group-item" th:each="userFile : ${userFiles}" th:if="${userFile.isFolder()}">
+                        <a class="nav-link" th:if="${path == null}"
+                           th:href="@{/(path=${userFile.fileName()})}"
                            th:text="${userFile.fileName()}"></a>
-                        <a class="nav-link" th:if="${path}" th:href="@{/(path=${path} + '/' + ${userFile.fileName()})}"
+                        <a class="nav-link" th:if="${path != null}"
+                           th:href="@{/(path=${path} + '/' + ${userFile.fileName()})}"
                            th:text="${userFile.fileName()}"></a>
                     </li>
                 </ul>

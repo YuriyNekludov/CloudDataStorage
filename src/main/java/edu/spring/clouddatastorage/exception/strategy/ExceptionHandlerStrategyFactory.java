@@ -13,7 +13,7 @@ public class ExceptionHandlerStrategyFactory {
     public ExceptionHandlerStrategy getExceptionHandlerStrategy(Exception e) {
         if (e instanceof PasswordNotMatchingException)
             return new PasswordNotMatchingExceptionHandler();
-        else if (e instanceof UserAlreadyCreatedException)
+        if (e instanceof UserAlreadyCreatedException)
             return new UserAlreadyCreatedExceptionHandler();
         else
             return new AnotherExceptionHandler();

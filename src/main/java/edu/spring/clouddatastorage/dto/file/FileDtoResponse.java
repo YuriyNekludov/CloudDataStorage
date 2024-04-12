@@ -5,5 +5,8 @@ import lombok.Builder;
 @Builder
 public record FileDtoResponse(String fileName,
                               String path,
-                              Boolean isFolder) {
+                              Boolean isFolder,
+                              String lastModified,
+                              String url,
+                              Long size) {
 }

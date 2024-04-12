@@ -40,8 +40,8 @@ public class AuthenticationController {
             return "authentication/registration";
         if (!user.password().equals(user.repeatPassword()))
             throw new PasswordNotMatchingException("Введенные пароли должны совпадать.");
-        var userDtoResponse = userService.create(user);
-        folderService.createUserRootFolder(userDtoResponse);
+        var userDto = userService.create(user);
+        folderService.createUserRootFolder(userDto);
         redirectAttributes.addAttribute("successMessage",
                 "Регистрация прошла успешно. Теперь вы можете авторизоваться.");
         return "redirect:/login";

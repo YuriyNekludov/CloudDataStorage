@@ -3,16 +3,17 @@ package edu.spring.clouddatastorage.util;
 import edu.spring.clouddatastorage.dto.UserDtoResponse;
 import edu.spring.clouddatastorage.security.UserDetailsDto;
 import lombok.experimental.UtilityClass;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 @UtilityClass
 public class ControllerHelper {
 
-    public UserDtoResponse takeUserDtoFromSecurity() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+    public UserDtoResponse getUSerDtoFromAuthentication(Authentication authentication) {
         var userDetails = (UserDetailsDto) authentication.getPrincipal();
         return UserDtoResponse.builder()
                 .id(userDetails.getId())
@@ -25,19 +26,19 @@ public class ControllerHelper {
         if (pathElements.length == 1)
             return List.of(pathElements[0]);
         List<String> pathElementsList = new ArrayList<>();
-        var sb = new StringBuilder();
-        for (int i = 0; i < pathElements.length; i++) {
-            sb.append(pathElements[i]);
-            pathElementsList.add(sb.toString());
-            if (i != pathElements.length - 1)
-                sb.append("/");
+        var sj = new StringJoiner("/");
+        for (String pathElement : pathElements) {
+            sj.add(pathElement);
+            pathElementsList.add(sj.toString());
         }
         return pathElementsList;
     }
 
     public String generateRedirectUrl(String path) {
-        if (path != null && !path.isEmpty())
+        if (path != null && !path.isEmpty()) {
+            path = UriEncoder.encode(path);
             return "redirect:/?path=" + path;
+        }
         return "redirect:/";
     }
 }
