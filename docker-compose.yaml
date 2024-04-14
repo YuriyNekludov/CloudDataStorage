@@ -5,6 +5,8 @@ volumes:
     driver: local
   minio_data:
     driver: local
+  redis_data:
+    driver: local
 
 services:
   cds_database:
@@ -22,7 +24,7 @@ services:
     restart: always
 
   minio:
-    image: minio/minio:latest
+    image: minio/minio
     container_name: minio
     environment:
       - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
@@ -33,3 +35,26 @@ services:
       - '9000:9000'
     volumes:
       - minio_data:/minio
+
+  redis:
+    image: redis
+    restart: always
+    container_name: redis
+    ports:
+      - '6379:6379'
+    environment:
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data/redis:/var/lib/redis
+
+  app:
+    build:
+      context: .
+    container_name: cloud_data_storage
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - '8080:8080'

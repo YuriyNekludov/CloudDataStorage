@@ -21,5 +21,5 @@ public interface FileManagerService {
 
     FileDtoResponse getFile(FileDtoRequest fileDto);
 
-    FileDtoResponse search(FileDtoRequest fileDto);
+    List<FileDtoResponse> search(FileDtoRequest fileDto);
 }

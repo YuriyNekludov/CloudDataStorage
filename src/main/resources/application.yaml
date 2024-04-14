@@ -1,11 +1,14 @@
 spring:
   config:
-    name: CloudDataStorage
     import: optional:file:.env[.properties]
   mvc:
     hiddenmethod:
       filter:
         enabled: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/${MYSQL_DATABASE}
@@ -24,6 +27,16 @@ spring:
         hbm2ddl:
           auto: validate
     open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+server:
+  servlet:
+    session:
+      timeout: 1h
 
 minio:
   bucket: ${MINIO_BUCKET}

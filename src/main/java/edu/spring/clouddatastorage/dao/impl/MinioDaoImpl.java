@@ -3,6 +3,9 @@ package edu.spring.clouddatastorage.dao.impl;
 import edu.spring.clouddatastorage.config.props.MinioProperties;
 import edu.spring.clouddatastorage.dao.MinioDao;
 import edu.spring.clouddatastorage.dto.file.FileDtoResponse;
+import edu.spring.clouddatastorage.exception.DuplicateNameException;
+import edu.spring.clouddatastorage.exception.MinioInteractionException;
+import edu.spring.clouddatastorage.util.ItemParser;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
 import io.minio.GetPresignedObjectUrlArgs;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +38,7 @@ public class MinioDaoImpl implements MinioDao {
     private final MinioProperties minioProperties;
 
     @Override
-    public List<FileDtoResponse> getFiles(String folder) {
+    public List<FileDtoResponse> findFiles(String folder) {
         try {
             Iterable<Result<Item>> result = getListObjects(folder);
             if (!result.iterator().hasNext()) {
@@ -45,18 +49,19 @@ public class MinioDaoImpl implements MinioDao {
                     var item = itemResult.get();
                     if (item.objectName().equals(folder))
                         continue;
-                    var file = parseItemIntoFileDtoResponse(item, folder);
+                    var file = ItemParser.parseItemIntoFileDtoResponse(item, folder);
                     files.add(file);
                 }
                 return files;
             }
         } catch (Exception e) {
-            throw new RuntimeException(e); // TODO
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
         }
     }
 
     @Override
-    public FileDtoResponse getFile(String folderName, String fileFullName, String path) {
+    public FileDtoResponse findFile(String folderName, String fileFullName, String path) {
         try {
             Iterable<Result<Item>> result = getListObjects(folderName);
             if (!result.iterator().hasNext()) {
@@ -65,32 +70,39 @@ public class MinioDaoImpl implements MinioDao {
             for (Result<Item> itemResult : result) {
                 var item = itemResult.get();
                 if (item.objectName().equals(fileFullName)) {
-                    FileDtoResponse.FileDtoResponseBuilder builder = FileDtoResponse.builder();
-                    builder.size(item.size());
-                    builder.lastModified(String.valueOf(item.lastModified()));
-                    builder.fileName(fileFullName.substring(fileFullName.lastIndexOf("/") + 1));
-                    builder.url(
-                            minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                                    .method(Method.GET)
-                                    .bucket(minioProperties.getBucket())
-                                    .object(item.objectName())
-                                    .expiry(2, TimeUnit.HOURS)
-                                    .build())
-                    );
-                    if (path != null)
-                        builder.path(path);
-                    return builder.build();
+                    var fileName = item.objectName();
+                    var url = getUrl(fileName);
+                    return ItemParser.parseItemIntoFileDtoResponseForView(item, url, path);
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e); // TODO
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
         }
         return null;
     }
 
     @Override
-    public List<FileDtoResponse> searchFiles(String folderName) {
-        return List.of();
+    public List<FileDtoResponse> searchFiles(String fileName, String rootFolder) {
+        List<FileDtoResponse> files = new ArrayList<>();
+        try {
+            Iterable<Result<Item>> result = getListObjects(rootFolder);
+            if (!result.iterator().hasNext())
+                return emptyList();
+            for (Result<Item> itemResult : result) {
+                var item = itemResult.get();
+                if (item.isDir())
+                    files.addAll(searchFiles(fileName, item.objectName()));
+                else {
+                    if (item.objectName().contains(fileName))
+                        files.add(ItemParser.parseItemIntoFileDtoResponse(item, rootFolder));
+                }
+            }
+            return files;
+        } catch (Exception e) {
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
+        }
     }
 
     @Override
@@ -107,7 +119,8 @@ public class MinioDaoImpl implements MinioDao {
                 deleteFile(objectName);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e); // TODO
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
         }
     }
 
@@ -119,7 +132,8 @@ public class MinioDaoImpl implements MinioDao {
                     .object(deletePath)
                     .build());
         } catch (Exception e) {
-            throw new RuntimeException(e); // TODO
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
         }
     }
 
@@ -132,7 +146,8 @@ public class MinioDaoImpl implements MinioDao {
                     .stream(new ByteArrayInputStream(new byte[]{}), 0, -1)
                     .build());
         } catch (Exception e) {
-            throw new RuntimeException(e); // TODO
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
         }
     }
 
@@ -149,29 +164,22 @@ public class MinioDaoImpl implements MinioDao {
                     .objects(objects)
                     .build());
         } catch (Exception e) {
-            throw new RuntimeException(e); // TODO
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
         }
     }
 
     @Override
-    public void renameFile(String pathForRename, String pathWithNewName) {
-        try {
-            minioClient.copyObject(CopyObjectArgs.builder()
-                    .bucket(minioProperties.getBucket())
-                    .object(pathWithNewName)
-                    .source(CopySource.builder()
-                            .bucket(minioProperties.getBucket())
-                            .object(pathForRename)
-                            .build())
-                    .build());
-            deleteFile(pathForRename);
-        } catch (Exception e) {
-            throw new RuntimeException(e); // TODO
-        }
+    public void renameFile(String pathForRename, String pathWithNewName, String pathToFile) {
+        if (findFile(pathToFile, pathWithNewName, null) != null)
+            throw new DuplicateNameException("Файл с таким именем уже существует в такой директории.");
+        renameFile(pathForRename, pathWithNewName);
     }
 
     @Override
     public void renameFolder(String pathForRename, String pathWithNewName) {
+        if (getListObjects(pathWithNewName).iterator().hasNext())
+            throw new DuplicateNameException("Файл с таким именем уже существует в такой директории.");
         try {
             Iterable<Result<Item>> results = getListObjects(pathForRename);
             for (Result<Item> result : results) {
@@ -185,7 +193,8 @@ public class MinioDaoImpl implements MinioDao {
             }
             deleteFolder(pathForRename);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
         }
     }
 
@@ -196,20 +205,34 @@ public class MinioDaoImpl implements MinioDao {
                 .build());
     }
 
-    private FileDtoResponse parseItemIntoFileDtoResponse(Item item, String defaultFolderName) {
-        var itemName = item.objectName().substring(defaultFolderName.length());
-        if (item.isDir())
-            return FileDtoResponse.builder()
-                    .fileName(itemName.substring(0, itemName.length() - 1))
-                    .isFolder(true)
-                    .build();
-        return FileDtoResponse.builder()
-                .fileName(itemName)
-                .isFolder(false)
-                .build();
+    private String getUrl(String fileName) {
+        try {
+            return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                    .method(Method.GET)
+                    .bucket(minioProperties.getBucket())
+                    .object(fileName)
+                    .expiry(2, TimeUnit.HOURS)
+                    .build());
+        } catch (Exception e) {
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
+        }
     }
 
-    private List<FileDtoResponse> deepSearchFiles(String folderName, String fileName) {
-        return null;
+    private void renameFile(String pathForRename, String pathWithNewName) {
+        try {
+            minioClient.copyObject(CopyObjectArgs.builder()
+                    .bucket(minioProperties.getBucket())
+                    .object(pathWithNewName)
+                    .source(CopySource.builder()
+                            .bucket(minioProperties.getBucket())
+                            .object(pathForRename)
+                            .build())
+                    .build());
+            deleteFile(pathForRename);
+        } catch (Exception e) {
+            throw new MinioInteractionException("При работе сервиса что-то пошло не так. Мы уже работаем над этим. " +
+                    "Пожалуйста, повторите снова через некоторое время.");
+        }
     }
 }

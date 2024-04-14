@@ -24,7 +24,7 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public void create(FolderCreateDto folderDto) {
-        String newFolderName = StringFormatUtil.getPathOrNameForFolders(
+        String newFolderName = StringFormatUtil.formatPathForFolders(
                 folderDto.path(),
                 folderDto.folderName(),
                 folderDto.userId()
@@ -34,7 +34,7 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public void delete(FileDeleteDto fileDto) {
-        var deletePath = StringFormatUtil.getPathOrNameForFolders(
+        var deletePath = StringFormatUtil.formatPathForFolders(
                 fileDto.path(),
                 fileDto.fileName(),
                 fileDto.userId()
@@ -44,12 +44,12 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public void rename(FileRenameDto fileDto) {
-        var pathForRename = StringFormatUtil.getPathOrNameForFolders(
+        var pathForRename = StringFormatUtil.formatPathForFolders(
                 fileDto.path(),
                 fileDto.oldName(),
                 fileDto.userId()
         );
-        var pathWithNewName = StringFormatUtil.getPathOrNameForFolders(
+        var pathWithNewName = StringFormatUtil.formatPathForFolders(
                 fileDto.path(),
                 fileDto.newName(),
                 fileDto.userId()

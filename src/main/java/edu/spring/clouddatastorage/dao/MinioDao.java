@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MinioDao {
 
-    List<FileDtoResponse> getFiles(String folder);
+    List<FileDtoResponse> findFiles(String folder);
 
     void deleteFolder(String deletePath);
 
@@ -17,11 +17,11 @@ public interface MinioDao {
 
     void uploadFile(String pathForUpload, MultipartFile[] files);
 
-    void renameFile(String pathForRename, String pathWithNewName);
+    void renameFile(String pathForRename, String pathWithNewName, String pathToFile);
 
     void renameFolder(String pathForRename, String pathWithNewName);
 
-    FileDtoResponse getFile(String folderName, String fileFullName, String path);
+    FileDtoResponse findFile(String folderName, String fileFullName, String path);
 
-    List<FileDtoResponse> searchFiles(String folderName);
+    List<FileDtoResponse> searchFiles(String folderName, String rootFolder);
 }

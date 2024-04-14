@@ -6,13 +6,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Log4j2
-public class AnotherExceptionHandler implements ExceptionHandlerStrategy {
+public class MinioInteractionExceptionHandler implements ExceptionHandlerStrategy {
 
     @Override
     public String handeException(HttpServletResponse resp, RedirectAttributes redirectAttributes, Exception e) {
         log.warn("Something went wrong...: {}", e.getMessage());
         resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        redirectAttributes.addAttribute("message", "Что-то пошло не так :(");
+        redirectAttributes.addAttribute("message", e.getMessage());
         return "redirect:/error";
     }
 }

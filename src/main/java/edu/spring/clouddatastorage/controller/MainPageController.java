@@ -1,6 +1,5 @@
 package edu.spring.clouddatastorage.controller;
 
-import edu.spring.clouddatastorage.dto.UserDtoResponse;
 import edu.spring.clouddatastorage.dto.folder.FolderDto;
 import edu.spring.clouddatastorage.service.FileManagerService;
 import edu.spring.clouddatastorage.util.ControllerHelper;

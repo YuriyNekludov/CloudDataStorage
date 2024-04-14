@@ -1,7 +1,6 @@
 package edu.spring.clouddatastorage.controller;
 
 import edu.spring.clouddatastorage.dto.file.FileDeleteDto;
-import edu.spring.clouddatastorage.dto.file.FileDtoRequest;
 import edu.spring.clouddatastorage.dto.file.FileRenameDto;
 import edu.spring.clouddatastorage.dto.file.FileUploadDto;
 import edu.spring.clouddatastorage.dto.folder.FolderCreateDto;
@@ -9,16 +8,12 @@ import edu.spring.clouddatastorage.service.FileManagerService;
 import edu.spring.clouddatastorage.service.FolderService;
 import edu.spring.clouddatastorage.util.ControllerHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -56,20 +51,5 @@ public class FilesActionsController {
         else
             fileManagerService.rename(fileDto);
         return ControllerHelper.generateRedirectUrl(fileDto.path());
-    }
-
-    @GetMapping("/files")
-    public String getFile(@RequestParam("name") String fileName,
-                          @RequestParam(value = "path", required = false) String path,
-                          RedirectAttributes redirectAttributes,
-                          Authentication authentication) {
-        var userDto = ControllerHelper.getUSerDtoFromAuthentication(authentication);
-        var fileDto = FileDtoRequest.builder()
-                .path(path)
-                .fileName(fileName)
-                .userId(userDto.id())
-                .build();
-        redirectAttributes.addFlashAttribute("fileDto", fileManagerService.getFile(fileDto));
-        return ControllerHelper.generateRedirectUrl(path);
     }
 }

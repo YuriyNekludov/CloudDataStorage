@@ -11,7 +11,7 @@
 <body>
 <header>
     <div class="container-fluid">
-        <div class="row  bg-secondary">
+        <div class="row bg-secondary">
             <div class="col-3"></div>
             <div class="col-6 text-center text bd-highlight opacity-100 p-2 bg-secondary text-light fw-bold rounded m-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
@@ -25,7 +25,7 @@
                 <div class="opacity-100 bg-secondary text-light m-auto d-flex justify-content-end align-items-center"
                      th:if="${userDto}">
                     <h5 th:text="'Добро пожаловать, ' + ${userDto.username()}"></h5>
-                    <form th:method="GET" th:action="@{/logout}">
+                    <form th:method="POST" th:action="@{/logout}">
                         <button class="btn btn-outline-light m-2 align-content-center" type="submit">Выйти</button>
                     </form>
                 </div>
@@ -38,7 +38,7 @@
         <div class="row" style="height: 88.5vh">
             <div class="col-3" style="border-right: 1px solid #ccc;">
                 <form class="d-flex align-items-center" style="margin-top: 1rem" method="GET" action="/search">
-                    <input class="form-control me-2" type="search" placeholder="Введите название файла"
+                    <input class="form-control me-2" type="search" name="fileName" placeholder="Введите название файла"
                            aria-label="Search">
                     <button class="btn btn-outline-light bg-secondary m-2 align-content-center" type="submit">Поиск
                     </button>
@@ -98,14 +98,14 @@
                 </p>
                 <div class="card" th:if="${fileDto}">
                     <img src="image/file-earmark-fill.svg" width="50"
-                         height="50" class="card-img-top" alt="card-grid-image">
+                         height="50" class="card-img-top mt-2" alt="card-grid-image">
                     <div class="card-body">
-                        <h5 th:text="${fileDto.name()}"></h5>
-                        <a th:href="@{/(path=${fileDto.path()})}" th:if="${fileDto.path() != null}"
+                        <h5 th:text="${fileDto.fileName()}"></h5>
+                        <a th:href="@{/(path=${fileDto.path()})}" th:if="${!fileDto.path().isEmpty()}"
                            th:text="${'Путь к файлу: ' + fileDto.path()}"></a>
-                        <p th:if="${fileDto.path() == null}" th:text="${'Файл находится в корневой папке.'}"></p>
+                        <p th:if="${fileDto.path().isEmpty()}" th:text="${'Файл находится в корневой папке.'}"></p>
                         <p th:text="${'Изменен: ' + fileDto.lastModified()}"></p>
-                        <p th:text="${'Размер файла: ' + fileDto.size()} + байт"></p>
+                        <p th:text="${'Размер файла: ' + fileDto.size()} + ' Кбайт'"></p>
                         <a th:href="@{${fileDto.url()}}" th:text="${'Скачать'}"></a>
                     </div>
                 </div>
@@ -115,9 +115,9 @@
                      style="height: 75vh; width: 100%;" th:if="${userFiles == null or userFiles.isEmpty()}">
                     <p th:text="'У вас на данный момент нет загруженных файлов.'"></p>
                 </div>
-                <div class="card-group d-flex flex-row align-items-md-start" style="margin-top: 1rem;"
+                <div class="card-group d-flex flex-row align-items-md-start" style="margin-top: 1rem"
                      th:if="${userFiles}">
-                    <div class="card" style="margin-left: 1rem; width: 20%; flex: 0 0 auto;"
+                    <div class="card" style="margin-left: 1rem; width: 20%; flex: 0 0 auto; flex-grow: 0;"
                          th:each="userFile : ${userFiles}">
                         <a class="nav-link" th:if="${userFile.isFolder()}"
                            th:href="@{/(path=${path == null ? userFile.fileName() : path + '/' + userFile.fileName()})}">
@@ -180,11 +180,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col-2 d-flex flex-column justify-content-center align-items-center" style="height: 75vh">
+            <div class="col-2 d-flex flex-column justify-content-center align-items-center navigation">
                 <div class="badge bg-secondary text-wrap">
                     <h6 style="margin-bottom: 0.1rem">НАВИГАЦИЯ</h6>
                 </div>
-                <ul class="list-group list-group-flush" style="text-align: center; margin-top: 1rem">
+                <ul class="list-group list-group-flush" style="text-align: center; margin-top: 1rem; width: 100%">
                     <li class="list-group-item" th:if="${navigationPath == null}">Корневой каталог <small
                             class="text-muted"><-- Вы находитесь здесь</small></li>
                     <li class="list-group-item" th:if="${navigationPath}">

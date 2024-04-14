@@ -22,22 +22,29 @@ public class FileManagerServiceImpl implements FileManagerService {
 
     @Override
     public List<FileDtoResponse> getFiles(FolderDto folderDto) {
-        var folderName = StringFormatUtil.getPathOrFolderNameForFiles(folderDto.path(), folderDto.userId());
-        return minioDao.getFiles(folderName);
+        var folderName = StringFormatUtil.formatPathToFiles(folderDto.path(), folderDto.userId());
+        return minioDao.findFiles(folderName);
     }
 
     @Override
     public FileDtoResponse getFile(FileDtoRequest fileDto) {
-        var fileFullName = StringFormatUtil.getPathForRenameOrGettingFile(fileDto.path(),
+        var fileFullName = StringFormatUtil.formatPathForFileOperation(
+                fileDto.path(),
                 fileDto.fileName(),
                 fileDto.userId());
-        var folderName = StringFormatUtil.getPathOrFolderNameForFiles(fileDto.path(), fileDto.userId());
-        return minioDao.getFile(folderName, fileFullName, fileDto.path());
+        var folderName = StringFormatUtil.formatPathToFiles(fileDto.path(), fileDto.userId());
+        return minioDao.findFile(folderName, fileFullName, fileDto.path());
+    }
+
+    @Override
+    public List<FileDtoResponse> search(FileDtoRequest fileDto) {
+        var rootFolder = StringFormatUtil.getUserRootFolderName(fileDto.userId());
+        return minioDao.searchFiles(fileDto.fileName(), rootFolder);
     }
 
     @Override
     public void delete(FileDeleteDto fileDto) {
-            var deletePath = StringFormatUtil.getPathForDeleteFiles(
+            var deletePath = StringFormatUtil.formatPathForDeleteFiles(
                     fileDto.path(),
                     fileDto.fileName(),
                     fileDto.userId()
@@ -47,7 +54,7 @@ public class FileManagerServiceImpl implements FileManagerService {
 
     @Override
     public void upload(FileUploadDto fileDto) {
-        var pathForUpload = StringFormatUtil.getPathOrFolderNameForFiles(fileDto.path(), fileDto.userId());
+        var pathForUpload = StringFormatUtil.formatPathToFiles(fileDto.path(), fileDto.userId());
         if (fileDto.folder() == null) {
             minioDao.uploadFile(pathForUpload, fileDto.file());
         } else {
@@ -57,9 +64,21 @@ public class FileManagerServiceImpl implements FileManagerService {
 
     @Override
     public void rename(FileRenameDto fileDto) {
-        var pathForRename = StringFormatUtil.getPathForRenameOrGettingFile(fileDto.path(), fileDto.oldName(), fileDto.userId());
-        var newName = StringFormatUtil.getNewFileName(fileDto.oldName(), fileDto.newName());
-        var pathWithNewName = StringFormatUtil.getPathForRenameOrGettingFile(fileDto.path(), fileDto.newName(), fileDto.userId());
-        minioDao.renameFile(pathForRename, pathWithNewName);
+        var pathForRename = StringFormatUtil.formatPathForFileOperation(
+                fileDto.path(),
+                fileDto.oldName(),
+                fileDto.userId());
+        var newName = StringFormatUtil.getNewFileNameWithExtension(
+                fileDto.oldName(),
+                fileDto.newName());
+        var pathWithNewName = StringFormatUtil.formatPathForFileOperation(
+                fileDto.path(),
+                newName,
+                fileDto.userId());
+        var pathToFile = StringFormatUtil.formatPathToFiles(
+                fileDto.path(),
+                fileDto.userId()
+        );
+        minioDao.renameFile(pathForRename, pathWithNewName, pathToFile);
     }
 }
