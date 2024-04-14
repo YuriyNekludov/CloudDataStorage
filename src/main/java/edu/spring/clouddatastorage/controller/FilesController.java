@@ -34,11 +34,9 @@ public class FilesController {
                 .userId(userDto.id())
                 .build();
         redirectAttributes.addFlashAttribute("fileDto", fileManagerService.getFile(fileDto));
-        var refer = request.getHeader("Referer");
-        if (refer.contains("/search")) {
-            searchParam = UriEncoder.encode(searchParam);
-            return "redirect:/search?fileName=" + searchParam;
-        }
-        return ControllerHelper.generateRedirectUrl( path);
+        if (searchParam == null)
+            return ControllerHelper.generateRedirectUrl(path);
+        searchParam = UriEncoder.encode(searchParam);
+        return "redirect:/search?fileName=" + searchParam;
     }
 }

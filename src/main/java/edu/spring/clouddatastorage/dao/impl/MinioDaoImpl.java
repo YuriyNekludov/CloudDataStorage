@@ -94,8 +94,12 @@ public class MinioDaoImpl implements MinioDao {
                 if (item.isDir())
                     files.addAll(searchFiles(fileName, item.objectName()));
                 else {
-                    if (item.objectName().contains(fileName))
-                        files.add(ItemParser.parseItemIntoFileDtoResponse(item, rootFolder));
+                    if (item.objectName().contains(fileName)) {
+                        var file = ItemParser.parseItemIntoFileDtoResponse(item, rootFolder);
+                        if (file.fileName().isBlank())
+                            continue;
+                        files.add(file);
+                    }
                 }
             }
             return files;
