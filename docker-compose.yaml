@@ -12,6 +12,7 @@ services:
   cds_database:
     image: mysql
     container_name: cds_database
+    restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_USER}
@@ -21,7 +22,6 @@ services:
       - '3306:3306'
     volumes:
       - database_data:/var/lib/mysql
-    restart: always
 
   minio:
     image: minio/minio
@@ -47,14 +47,3 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
       - redis_data:/data/redis:/var/lib/redis
-
-  app:
-    build:
-      context: .
-    container_name: cloud_data_storage
-    env_file:
-      - .env
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    ports:
-      - '8080:8080'
