@@ -26,6 +26,7 @@ services:
   minio:
     image: minio/minio
     container_name: minio
+    restart: always
     environment:
       - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
       - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
@@ -47,3 +48,18 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
       - redis_data:/data/redis:/var/lib/redis
+
+  cds_app:
+    build:
+      context: .
+    container_name: cds_app
+    depends_on:
+      - cds_database
+      - redis
+      - minio
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - '8080:8080'

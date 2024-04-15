@@ -56,7 +56,6 @@
                             <input class="form-control" type="file" id="formFile" name="file"
                                    style="margin-bottom: 0.5rem" multiple>
                             <input type="hidden" name="path" th:value="${path}">
-                            <input type="hidden" name="userId" th:value="${userDto.id()}">
                             <button type="submit" class="btn btn-outline-light bg-secondary"
                                     style="margin-bottom: 0.5rem">
                                 Загрузить
@@ -68,7 +67,6 @@
                             <input class="form-control" type="file" id="formFolder" name="folder" webkitdirectory
                                    multiple style="margin-bottom: 0.5rem">
                             <input type="hidden" name="path" th:value="${path}">
-                            <input type="hidden" name="userId" th:value="${userDto.id()}">
                             <button type="submit" class="btn btn-outline-light bg-secondary">
                                 Загрузить
                             </button>
@@ -89,7 +87,6 @@
                                    placeholder="Введите имя папки"
                                    aria-label="Search" style="margin-left: 0.5rem">
                             <input type="hidden" id="path" name="path" th:value="${path}">
-                            <input type="hidden" name="userId" th:value="${userDto.id()}">
                             <button class="btn btn-outline-light bg-secondary m-2 align-content-center" type="submit">
                                 Создать
                             </button>
@@ -159,7 +156,6 @@
                                     <input type="hidden" name="path" th:value="${path}">
                                     <input type="hidden" name="fileName" th:value="${userFile.fileName()}">
                                     <input type="hidden" name="isFolder" th:value="${userFile.isFolder()}">
-                                    <input type="hidden" name="userId" th:value="${userDto.id()}">
                                     <button type="submit" class="btn btn-secondary btn-sm">Удалить</button>
                                 </form>
                                 <form class="d-flex flex-column align-items-center" th:method="PATCH"
@@ -173,7 +169,6 @@
                                            th:value="${path}">
                                     <input type="hidden" id="oldFolderName" name="oldName"
                                            th:value="${userFile.fileName()}">
-                                    <input type="hidden" name="userId" th:value="${userDto.id()}">
                                     <input type="hidden" name="isFolder" th:value="${userFile.isFolder()}">
                                     <button class="btn btn-outline-light bg-secondary m-2 align-content-center"
                                             type="submit">

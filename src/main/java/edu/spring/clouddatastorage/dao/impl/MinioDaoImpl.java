@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -143,6 +142,8 @@ public class MinioDaoImpl implements MinioDao {
 
     @Override
     public void createFolder(String folderName) {
+        if (getListObjects(folderName).iterator().hasNext())
+            throw new DuplicateNameException("Файл с таким именем уже существует в такой директории.");
         try {
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(minioProperties.getBucket())

@@ -6,4 +6,4 @@ spring:
       host: ${REDIS_HOST}
 
 minio:
-  endpoint: ${MINIO_ENDPOINT_DEV}
+  endpoint: ${MINIO_ENDPOINT}

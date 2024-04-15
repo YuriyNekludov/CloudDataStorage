@@ -45,39 +45,39 @@ public class FileManagerServiceImpl implements FileManagerService {
     @Override
     public void delete(FileDeleteDto fileDto) {
             var deletePath = StringFormatUtil.formatPathForDeleteFiles(
-                    fileDto.path(),
-                    fileDto.fileName(),
-                    fileDto.userId()
+                    fileDto.getPath(),
+                    fileDto.getFileName(),
+                    fileDto.getUserId()
             );
             minioDao.deleteFile(deletePath);
     }
 
     @Override
     public void upload(FileUploadDto fileDto) {
-        var pathForUpload = StringFormatUtil.formatPathToFiles(fileDto.path(), fileDto.userId());
-        if (fileDto.folder() == null) {
-            minioDao.uploadFile(pathForUpload, fileDto.file());
+        var pathForUpload = StringFormatUtil.formatPathToFiles(fileDto.getPath(), fileDto.getUserId());
+        if (fileDto.getFolder() == null) {
+            minioDao.uploadFile(pathForUpload, fileDto.getFile());
         } else {
-            minioDao.uploadFile(pathForUpload, fileDto.folder());
+            minioDao.uploadFile(pathForUpload, fileDto.getFolder());
         }
     }
 
     @Override
     public void rename(FileRenameDto fileDto) {
         var pathForRename = StringFormatUtil.formatPathForFileOperation(
-                fileDto.path(),
-                fileDto.oldName(),
-                fileDto.userId());
+                fileDto.getPath(),
+                fileDto.getOldName(),
+                fileDto.getUserId());
         var newName = StringFormatUtil.getNewFileNameWithExtension(
-                fileDto.oldName(),
-                fileDto.newName());
+                fileDto.getOldName(),
+                fileDto.getNewName());
         var pathWithNewName = StringFormatUtil.formatPathForFileOperation(
-                fileDto.path(),
+                fileDto.getPath(),
                 newName,
-                fileDto.userId());
+                fileDto.getUserId());
         var pathToFile = StringFormatUtil.formatPathToFiles(
-                fileDto.path(),
-                fileDto.userId()
+                fileDto.getPath(),
+                fileDto.getUserId()
         );
         minioDao.renameFile(pathForRename, pathWithNewName, pathToFile);
     }

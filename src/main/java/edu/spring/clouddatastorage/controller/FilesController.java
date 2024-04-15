@@ -25,8 +25,7 @@ public class FilesController {
                           @RequestParam(value = "path", required = false) String path,
                           @RequestParam(value = "searchParam", required = false) String searchParam,
                           RedirectAttributes redirectAttributes,
-                          Authentication authentication,
-                          HttpServletRequest request) {
+                          Authentication authentication) {
         var userDto = ControllerHelper.getUSerDtoFromAuthentication(authentication);
         var fileDto = FileDtoRequest.builder()
                 .path(path)

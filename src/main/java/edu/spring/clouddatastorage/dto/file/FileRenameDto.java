@@ -1,8 +1,19 @@
 package edu.spring.clouddatastorage.dto.file;
 
-public record FileRenameDto(String oldName,
-                            String newName,
-                            String path,
-                            Long userId,
-                            Boolean isFolder) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class FileRenameDto {
+
+    private String oldName;
+    private String newName;
+    private String path;
+    private Long userId;
+    private Boolean isFolder;
 }

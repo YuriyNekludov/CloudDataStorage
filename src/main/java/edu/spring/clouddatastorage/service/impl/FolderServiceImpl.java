@@ -25,9 +25,9 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public void create(FolderCreateDto folderDto) {
         String newFolderName = StringFormatUtil.formatPathForFolders(
-                folderDto.path(),
-                folderDto.folderName(),
-                folderDto.userId()
+                folderDto.getPath(),
+                folderDto.getFolderName(),
+                folderDto.getUserId()
         );
         minioDao.createFolder(newFolderName);
     }
@@ -35,9 +35,9 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public void delete(FileDeleteDto fileDto) {
         var deletePath = StringFormatUtil.formatPathForFolders(
-                fileDto.path(),
-                fileDto.fileName(),
-                fileDto.userId()
+                fileDto.getPath(),
+                fileDto.getFileName(),
+                fileDto.getUserId()
         );
         minioDao.deleteFolder(deletePath);
     }
@@ -45,14 +45,14 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public void rename(FileRenameDto fileDto) {
         var pathForRename = StringFormatUtil.formatPathForFolders(
-                fileDto.path(),
-                fileDto.oldName(),
-                fileDto.userId()
+                fileDto.getPath(),
+                fileDto.getOldName(),
+                fileDto.getUserId()
         );
         var pathWithNewName = StringFormatUtil.formatPathForFolders(
-                fileDto.path(),
-                fileDto.newName(),
-                fileDto.userId()
+                fileDto.getPath(),
+                fileDto.getNewName(),
+                fileDto.getUserId()
         );
         minioDao.renameFolder(pathForRename, pathWithNewName);
     }
